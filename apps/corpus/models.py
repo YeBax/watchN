@@ -32,7 +32,7 @@ class Tag(models.Model):
     建议设置 大类别 和 子类别
     不要有过多的层级
     """
-    tag = models.CharField(max_length=20, verbose_name="标签名称")
+    tag = models.CharField(max_length=20, verbose_name="标签名称", unique=True)
     belong = models.ForeignKey('self', verbose_name="上一级标签名称", on_delete=models.CASCADE, null=True, blank=True,
                                related_name='belong_tag',
                                help_text='选择上一级类别，不选择为最高类别')
@@ -66,7 +66,7 @@ class KeyWord(models.Model):
     """
     关键词
     """
-    word = models.CharField(max_length=50, verbose_name="关键词")
+    word = models.CharField(max_length=50, verbose_name="关键词", unique=True)
 
     class Meta:
         verbose_name = "关键词"
@@ -86,7 +86,29 @@ class Word2Tag(models.Model):
     class Meta:
         verbose_name = "关键词映射"
         verbose_name_plural = verbose_name
+        unique_together = ('word', 'tag')
 
     def __str__(self):
         return "%s-%s" % (self.tag, self.word)
 
+
+class Collection(models.Model):
+    """
+    问题收集
+    收集没有匹配到的问题
+    """
+    UNKNOWN_STATE = [
+        (0, "未解决"),
+        (1, "已解决"),
+        (2, "无效问题")
+    ]
+    questions = models.TextField(max_length=300, verbose_name="未知问题", default="")
+    create_time = models.DateTimeField(default=datetime.now, verbose_name="创建时间")
+    state = models.IntegerField(verbose_name="解决状态", choices=UNKNOWN_STATE, default=0)
+
+    class Meta:
+        verbose_name = "问题收集"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.questions

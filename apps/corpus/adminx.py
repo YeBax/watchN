@@ -1,6 +1,6 @@
 import xadmin
 
-from .models import QueAndAns, Tag, KeyWord, Tag2Question, Word2Tag
+from .models import QueAndAns, Tag, KeyWord, Tag2Question, Word2Tag, Collection
 
 
 class QueAndAnsAdmin:
@@ -48,9 +48,17 @@ class Word2TagAdmin:
     ordering = ["-id"]
 
 
+class CollectionAdmin:
+    show_bookmarks = False
+    list_display = ['id', 'questions', 'state', 'create_time']
+    list_editable = ['state', 'create_time']
+    search_fields = ['questions']
+    list_filter = ['create_time', 'state']
+    ordering = ["state"]
+
 xadmin.site.register(QueAndAns, QueAndAnsAdmin)
 xadmin.site.register(Tag, TagAdmin)
 xadmin.site.register(Tag2Question, Tag2QuestionAdmin)
 xadmin.site.register(KeyWord, KeyWordAdmin)
 xadmin.site.register(Word2Tag, Word2TagAdmin)
-
+xadmin.site.register(Collection, CollectionAdmin)
